@@ -18,7 +18,8 @@ MakeJson(){
 SendReq(){
     local _Url="$1" _CurlArgs=() _Json=""
     shift 1
-    _CurlArgs+=(-s -L --fail-with-body) # curlのよくある設定
+    _CurlArgs+=(-s -L) # curlのよくある設定
+    #_CurlArgs+=(--fail-with-body) # 失敗時の処理
     _CurlArgs+=(-X POST) # MisskeyのAPIは全てPOST
     _CurlArgs+=(-H "Content-Type: application/json") # JSONで送信
     _CurlArgs+=(-d "$(MakeJson "$@")") # JSONを送信
