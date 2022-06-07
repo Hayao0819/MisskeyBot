@@ -2,8 +2,8 @@
 
 # スクリプトを初期化
 set -Eeu -o pipefail
-CurrentDir="$(cd "$(dirname "${0}")" || true;pwd)"
-source "${CurrentDir}/load.sh"
+RepoDir="$(cd "$(dirname "${0}")" || true;pwd)"
+source "${RepoDir}/common/load.sh"
 
 RnIntervalSec="$IntervalSec"
 
@@ -19,7 +19,7 @@ while true; do
             continue
         else
             Msg.Info "Renote $NoteId"
-            Misskey.Notes.Create "" renoteId="$NoteId" visibility="home" > "$LogDir/$NoteId.json"
+            #Misskey.Notes.Create "" renoteId="$NoteId" visibility="home" > "$LogDir/$NoteId.json"
             ReNotedIdList+=("$NoteId")
         fi
     done < <(Misskey.Notes.Search "今日も一日" | jq -r ".[].id")

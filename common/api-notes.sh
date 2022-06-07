@@ -13,6 +13,4 @@ Misskey.Notes.Create(){
     BindingBase "notes/create" text -- "$@"
 }
 
-Misskey.Users.Notes(){
-    BindingBase "users/notes" userId -- "$@"
-}
+

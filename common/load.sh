@@ -2,18 +2,19 @@
 
 set -Eeu -o pipefail
 
-CurrentDir="$(cd "$(dirname "${0}")" || true;pwd)"
+RepoDir="$(cd "$(dirname "${0}/")" || true;pwd)"
 
 # shellcheck source=/dev/null
 source /dev/stdin < <(fasbashlib -x "v0.2.2" 2> /dev/null || curl -sL "https://github.com/Hayao0819/FasBashLib/releases/download/v0.2.2/fasbashlib.sh")
 
 # Load bot config
-source "$CurrentDir/bot.conf"
-source "${CurrentDir}/api-base.sh"
-source "${CurrentDir}/api.sh"
+source "${RepoDir}/bot.conf"
+source "${RepoDir}/common/api-base.sh"
+source "${RepoDir}/common/api-notes.sh"
+source "${RepoDir}/common/api-users.sh"
 
-if [[ -e "${CurrentDir}/.env" ]]; then
-    source "${CurrentDir}/.env"
+if [[ -e "${RepoDir}/.env" ]]; then
+    source "${RepoDir}/.env"
 fi
 
 APIEntryPoint="https://${MisskeyInstanceDomain}/api"
