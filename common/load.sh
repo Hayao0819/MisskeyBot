@@ -5,7 +5,8 @@ set -Eeu -o pipefail
 RepoDir="$(cd "$(dirname "${0}/")" || true;pwd)"
 
 # shellcheck source=/dev/null
-source /dev/stdin < <(fasbashlib -x "v0.2.2" 2> /dev/null || curl -sL "https://github.com/Hayao0819/FasBashLib/releases/download/v0.2.2/fasbashlib.sh")
+export FSBLIB_MSG="stderr"
+source /dev/stdin < <(fasbashlib -x "v0.2.3" 2> /dev/null || curl -sL "https://github.com/Hayao0819/FasBashLib/releases/download/v0.2.3/fasbashlib.sh")
 
 # Load bot config
 source "${RepoDir}/bot.conf"
