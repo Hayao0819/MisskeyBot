@@ -3,7 +3,7 @@
 # スクリプトを初期化
 set -Eeu -o pipefail
 RepoDir="$(cd "$(dirname "${0}")" || true;pwd)"
-source "${RepoDir}/common/load.sh"
+source "${RepoDir}/load.sh"
 
 RnIntervalSec="$IntervalSec"
 
