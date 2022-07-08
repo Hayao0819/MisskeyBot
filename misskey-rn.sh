@@ -41,9 +41,10 @@ Main(){
             if Sqlite3.ExistField "renoted" "id" "$NoteId"; then
                 continue
             else
-                Msg.Info "Renote $NoteId"
-                Misskey.Notes.Create "" renoteId="$NoteId" visibility="home" > "$LogDir/$NoteId.json"
-                Sqlite3.Insert "renoted" "$NoteId"
+                if Misskey.Notes.Create "" renoteId="$NoteId" visibility="home" > "$LogDir/$NoteId.json"; then
+                    Msg.Info "Renote $NoteId"
+                    Sqlite3.Insert "renoted" "$NoteId"
+                fi
             fi
         done < <(Misskey.Notes.Search "今日も一日" | jq -r ".[].id")
         sleep "$RnIntervalSec"
