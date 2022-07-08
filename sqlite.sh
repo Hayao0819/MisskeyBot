@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 Sqlite3.Call(){
-    echo  sqlite3 "$SQLITE3_DBPATH" "$@" >&2
+    Msg.Debug sqlite3 "$SQLITE3_DBPATH" "$@" >&2
     sqlite3 "${SQLITE3_OPTIONS[@]}" "$SQLITE3_DBPATH" "$@"
 }
 
