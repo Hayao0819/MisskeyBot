@@ -6,10 +6,15 @@ RepoDir="$(cd "$(dirname "${0}/")" || true;pwd)"
 
 # shellcheck source=/dev/null
 export FSBLIB_MSG="stderr"
-source /dev/stdin < <(curl -sL "https://raw.githubusercontent.com/Hayao0819/FasBashLib/9bcf013c2438f7dabd5d9455c942dd0b20ad8c0f/fasbashlib.sh")
+source /dev/stdin < <(curl -sL "https://raw.githubusercontent.com/Hayao0819/FasBashLib/3cba5962259a670ab7f0eff79898ef7fd74cbcaa/fasbashlib.sh")
 
 # Load bot config
-source "${RepoDir}/bot.conf"
+for script in "${RepoDir}/bot.conf" "$RepoDir/sqlite.sh"; do
+    if [[ "$(realpath "$0")" != "$script" ]] && [[ -e "$script" ]]; then
+        source "$script"
+    fi
+done
+
 
 if [[ -e "${RepoDir}/.env" ]]; then
     source "${RepoDir}/.env"
