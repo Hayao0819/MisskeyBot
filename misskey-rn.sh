@@ -1,27 +1,56 @@
 #!/usr/bin/env bash
-
-# スクリプトを初期化
 set -Eeu -o pipefail
 RepoDir="$(cd "$(dirname "${0}")" || true;pwd)"
+cd "$RepoDir"
+
+# Load config and library
 source "${RepoDir}/load.sh"
 
+# RenoteBotの設定
 RnIntervalSec="$IntervalSec"
+RenotedDbPath="${RepoDir}/renoted.db"
 
-# Botを初期化
-Msg.Info "リノートした一覧を取得しています..."
-ArrayAppend ReNotedIdList < <(Misskey.Users.Notes "914cmg2g5p" | jq -r ".[].renoteId")
-ArrayAppend ReNotedIdList < <(Misskey.Users.Notes "914cmg2g5p" | jq -r ".[].id")
+Prepare_Db(){
+
+    Sqlite3.Connect "$RenotedDbPath"
+    if ! Sqlite3.ExistTable "renoted"; then
+        Sqlite3.Create "renoted" "id string primary key"
+    fi
+}
+
+Prepare_RenotedList(){
+    local ReNotedIdList=() Id
+
+    Msg.Info "リノートした一覧を取得しています..."
+    ArrayAppend ReNotedIdList < <(Misskey.Users.Notes "" limit=100 | jq -r ".[].renoteId")
+    ArrayAppend ReNotedIdList < <(Misskey.Users.Notes "" limit=100 | jq -r ".[].id")
+
+    for Id in "${ReNotedIdList[@]}"; do
+        echo "$Id"
+        if ! Sqlite3.ExistField "renoted" "id" "$Id"; then
+            Sqlite3.Insert "renoted" "$Id"
+        fi
+    done
+}
 
 # Start Bot
-while true; do
-    while read -r NoteId; do
-        if Array.Includes ReNotedIdList "$NoteId"; then
-            continue
-        else
-            Msg.Info "Renote $NoteId"
-            #Misskey.Notes.Create "" renoteId="$NoteId" visibility="home" > "$LogDir/$NoteId.json"
-            ReNotedIdList+=("$NoteId")
-        fi
-    done < <(Misskey.Notes.Search "今日も一日" | jq -r ".[].id")
-    sleep "$RnIntervalSec"
-done
+Main(){
+    while true; do
+        while read -r NoteId; do
+            #if Array.Includes ReNotedIdList "$NoteId"; then
+            if Sqlite3.ExistField "renoted" "id" "$NoteId"; then
+                continue
+            else
+                Msg.Info "Renote $NoteId"
+                Misskey.Notes.Create "" renoteId="$NoteId" visibility="home" > "$LogDir/$NoteId.json"
+                Sqlite3.Insert "renoted" "$NoteId"
+            fi
+        done < <(Misskey.Notes.Search "今日も一日" | jq -r ".[].id")
+        sleep "$RnIntervalSec"
+    done
+}
+
+Prepare_Db
+#Prepare_RenotedList
+
+Main
