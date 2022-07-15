@@ -52,7 +52,7 @@ Main(){
 }
 
 
-Prepare_Db | tee "$LogDir/$EPOCHSECONDS.log"
+Prepare_Db
 #Prepare_RenotedList
-Main | tee "$LogDir/$EPOCHSECONDS.log"
+Main
 
