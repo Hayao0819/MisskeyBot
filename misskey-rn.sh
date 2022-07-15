@@ -25,6 +25,10 @@ Prepare_RenotedList(){
     ArrayAppend ReNotedIdList < <(Misskey.Users.Notes "" limit=100 | jq -r ".[].renoteId")
     ArrayAppend ReNotedIdList < <(Misskey.Users.Notes "" limit=100 | jq -r ".[].id")
 
+    # これまでのを取得して大量にRNするのを防ぐ
+    ArrayAppend ReNotedIdList < <(Misskey.Notes.Search "今日も一日" | jq -r ".[].id")
+
+
     for Id in "${ReNotedIdList[@]}"; do
         echo "$Id"
         if ! Sqlite3.ExistField "renoted" "id" "$Id"; then
