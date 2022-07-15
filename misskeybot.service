@@ -1,0 +1,12 @@
+[Unit]
+Description=A bot for Misskey written in Bash
+After=network-online.target
+#Requires=NetworkManager.service
+#Documentation=https://github.com/Hayao0819/nm-vpngate
+
+[Service]
+ExecStart=/home/hayao/Git/MisskeyBot/misskey-rn.sh
+Restart=on-failure
+
+[Install]
+WantedBy=network-online.target
